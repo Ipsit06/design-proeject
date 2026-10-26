@@ -1,0 +1,21 @@
+{
+  "name": "signbridge-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SignBridge — Full-Stack Hand Gesture Recognition & Translation System",
+  "workspaces": [
+    "shared",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "setup": "node frontend/scripts/setup-mediapipe.mjs",
+    "dev": "concurrently -n backend,frontend -c green,cyan \"npm.cmd run dev -w backend\" \"npm.cmd run dev -w frontend\"",
+    "build": "npm.cmd run build -w shared && npm.cmd run build -w backend && npm.cmd run build -w frontend",
+    "start": "concurrently -n backend,frontend -c green,cyan \"npm.cmd run start -w backend\" \"npm.cmd run preview -w frontend\"",
+    "test": "npm.cmd run test -w backend && npm.cmd run test -w frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

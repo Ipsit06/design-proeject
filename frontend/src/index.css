@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #c8dacb transparent;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 90% -10%, rgba(231, 240, 233, 0.9), transparent 28rem),
+      #F7F8F5;
+    color: #242B26;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  ::selection {
+    background: #c8dacb;
+    color: #1e4f3c;
+  }
+}
