@@ -16,7 +16,7 @@ import { useToast } from '../components/ui/Toast.js';
 import { gesturesApi } from '../services/gesturesApi.js';
 import type { GestureMapping } from '@signbridge/shared';
 
-type LibraryTab = 'all' | 'asl_alphabet' | 'hci_gestures' | 'other';
+type LibraryTab = 'all' | 'asl_alphabet' | 'hci_gestures' | 'emoji_catalog' | 'other';
 
 export const GestureLibrary: React.FC = () => {
   const { showToast } = useToast();
@@ -87,8 +87,11 @@ export const GestureLibrary: React.FC = () => {
     if (activeTab === 'hci_gestures') {
       return g.category.startsWith('HCI_');
     }
+    if (activeTab === 'emoji_catalog') {
+      return g.category.startsWith('EMOJI_');
+    }
     if (activeTab === 'other') {
-      return !g.category.startsWith('ASL_') && !g.category.startsWith('HCI_');
+      return !g.category.startsWith('ASL_') && !g.category.startsWith('HCI_') && !g.category.startsWith('EMOJI_');
     }
     return true;
   });
@@ -123,6 +126,7 @@ export const GestureLibrary: React.FC = () => {
             { id: 'all', label: `All Gestures (${gestures.length})` },
             { id: 'asl_alphabet', label: 'Harshil ASL Alphabet (26 Letters)' },
             { id: 'hci_gestures', label: 'Harshil HCI Actions (9 Gestures)' },
+            { id: 'emoji_catalog', label: '100 Emoji Gesture Catalog' },
             { id: 'other', label: 'Custom / Other' },
           ].map((tab) => (
             <button

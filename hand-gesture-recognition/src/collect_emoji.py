@@ -107,7 +107,8 @@ def main(camera_index: int = 0) -> None:
 
         h, w = frame.shape[:2]
         current_def: EmojiGestureDef = EMOJI_CLASSES[current_idx]
-        is_two_hands = (current_def.hands == "2_hands")
+        is_two_hands = (current_def.hands == 2 or str(current_def.hands).startswith("2"))
+        hands_label = "2 Hands" if is_two_hands else "1 Hand"
 
         # ── Define ROI bounding box based on 1-hand vs 2-hands ────
         if is_two_hands:
@@ -132,11 +133,11 @@ def main(camera_index: int = 0) -> None:
         frame = cv2.addWeighted(hud, 0.75, frame, 0.25, 0)
 
         # Title and Gesture Class Header
-        header_text = f"[{current_idx + 1:02d}/{total_classes:02d}] {current_def.name} ({current_def.hands.replace('_', ' ')})"
+        header_text = f"[{current_idx + 1:03d}/{total_classes:03d}] {current_def.name} ({hands_label})"
         cv2.putText(frame, header_text, (15, 32), cv2.FONT_HERSHEY_SIMPLEX, 0.85, (0, 255, 120), 2)
 
         # Emoji code representation and description
-        info_line = f"ID: {current_def.class_id} | Type: {current_def.type.capitalize()}"
+        info_line = f"Key: {current_def.class_id} | Type: {current_def.type.capitalize()}"
         cv2.putText(frame, info_line, (15, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (220, 220, 220), 1)
 
         instr_line = f"Guide: {current_def.collection_procedure}"

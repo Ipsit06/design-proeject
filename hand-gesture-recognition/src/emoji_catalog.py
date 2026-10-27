@@ -1,14 +1,12 @@
 """
-emoji_catalog.py - Canonical Catalog of 30 Distinct Hand Gesture Emojis.
+emoji_catalog.py - 100 gesture-to-emoji mapping catalogue.
 
-Each gesture is formally defined with:
-- class_id: Unique string identifier for folder naming and model indexing
-- emoji: Unicode character
-- name: Human-readable display title
-- description: Precise anatomical and hand configuration description
-- hands: '1_hand' or '2_hands'
-- type: 'static' or 'dynamic'
-- collection_procedure: Instructions for accurate webcam recording
+Important:
+- This is a design catalogue, not a trained model.
+- Several entries share similar poses/emoji outputs. A static classifier cannot
+  distinguish visually identical classes; merge such classes or use temporal/
+  context-aware recognition.
+- This is not a universal sign-language dictionary.
 """
 from __future__ import annotations
 
@@ -21,7 +19,711 @@ if hasattr(sys.stdout, "reconfigure"):
 
 import json
 from dataclasses import dataclass, asdict
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
+
+GESTURE_CLASSES: Dict[str, dict] = {
+    "THUMBS_UP": {
+        "emoji": "👍",
+        "name": "Thumbs Up",
+        "gesture": "Make a fist and extend the thumb upward.",
+        "hands": 1,
+        "type": "static",
+    },
+    "THUMBS_DOWN": {
+        "emoji": "👎",
+        "name": "Thumbs Down",
+        "gesture": "Make a fist and extend the thumb downward.",
+        "hands": 1,
+        "type": "static",
+    },
+    "PEACE": {
+        "emoji": "✌️",
+        "name": "Peace / Victory",
+        "gesture": "Extend index and middle fingers in a V.",
+        "hands": 1,
+        "type": "static",
+    },
+    "OK_SIGN": {
+        "emoji": "👌",
+        "name": "OK",
+        "gesture": "Touch thumb and index fingertips to form a circle.",
+        "hands": 1,
+        "type": "static",
+    },
+    "ROCK_ON": {
+        "emoji": "🤘",
+        "name": "Rock On",
+        "gesture": "Extend index and little fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "CALL_ME": {
+        "emoji": "🤙",
+        "name": "Call Me",
+        "gesture": "Extend thumb and little finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "LOVE_YOU_HAND": {
+        "emoji": "🤟",
+        "name": "Love You hand sign",
+        "gesture": "Extend thumb, index, and little finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "CROSSED_FINGERS": {
+        "emoji": "🤞",
+        "name": "Fingers Crossed",
+        "gesture": "Cross index and middle fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "OPEN_PALM": {
+        "emoji": "✋",
+        "name": "Stop / Open Palm",
+        "gesture": "Face palm toward camera with all fingers extended.",
+        "hands": 1,
+        "type": "static",
+    },
+    "RAISED_HAND": {
+        "emoji": "🖐️",
+        "name": "Raised Hand",
+        "gesture": "Spread all five fingers toward camera.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FIST": {
+        "emoji": "✊",
+        "name": "Raised Fist",
+        "gesture": "Close all fingers into a fist.",
+        "hands": 1,
+        "type": "static",
+    },
+    "POINT_UP": {
+        "emoji": "☝️",
+        "name": "Index Up",
+        "gesture": "Extend index finger upward.",
+        "hands": 1,
+        "type": "static",
+    },
+    "POINT_LEFT": {
+        "emoji": "👈",
+        "name": "Point Left",
+        "gesture": "Point index finger left in the image.",
+        "hands": 1,
+        "type": "static",
+    },
+    "POINT_RIGHT": {
+        "emoji": "👉",
+        "name": "Point Right",
+        "gesture": "Point index finger right in the image.",
+        "hands": 1,
+        "type": "static",
+    },
+    "POINT_FORWARD": {
+        "emoji": "🫵",
+        "name": "Point at Viewer",
+        "gesture": "Point index finger toward the camera.",
+        "hands": 1,
+        "type": "static",
+    },
+    "POINT_UPWARD": {
+        "emoji": "👆",
+        "name": "Point Upward",
+        "gesture": "Point index finger toward the top of the image.",
+        "hands": 1,
+        "type": "static",
+    },
+    "POINT_DOWN": {
+        "emoji": "👇",
+        "name": "Point Down",
+        "gesture": "Point index finger toward the bottom of the image.",
+        "hands": 1,
+        "type": "static",
+    },
+    "PINCH": {
+        "emoji": "🤏",
+        "name": "Pinch / A Little",
+        "gesture": "Bring thumb and index fingertip close together.",
+        "hands": 1,
+        "type": "static",
+    },
+    "PINCHED_FINGERS": {
+        "emoji": "🤌",
+        "name": "Pinched Fingers",
+        "gesture": "Bring fingertips together near the thumb.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FINGER_HEART": {
+        "emoji": "🫰",
+        "name": "Finger Heart",
+        "gesture": "Make the familiar thumb-and-index finger-heart pose.",
+        "hands": 1,
+        "type": "static",
+    },
+    "VULCAN_SALUTE": {
+        "emoji": "🖖",
+        "name": "Vulcan Salute",
+        "gesture": "Separate index/middle fingers from ring/little fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "WAVE": {
+        "emoji": "👋",
+        "name": "Wave",
+        "gesture": "Wave an open hand side to side.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "FOLDED_HANDS": {
+        "emoji": "🙏",
+        "name": "Folded Hands / Thanks",
+        "gesture": "Bring both palms together.",
+        "hands": 2,
+        "type": "static",
+    },
+    "HEART_HANDS": {
+        "emoji": "🫶",
+        "name": "Heart Hands",
+        "gesture": "Use both hands to form a heart shape.",
+        "hands": 2,
+        "type": "static",
+    },
+    "CLAP": {
+        "emoji": "👏",
+        "name": "Clapping",
+        "gesture": "Bring both palms together repeatedly.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "PALMS_UP": {
+        "emoji": "🤲",
+        "name": "Palms Up",
+        "gesture": "Hold both palms facing upward.",
+        "hands": 2,
+        "type": "static",
+    },
+    "OPEN_HANDS": {
+        "emoji": "👐",
+        "name": "Open Hands",
+        "gesture": "Show both open palms.",
+        "hands": 2,
+        "type": "static",
+    },
+    "CROSSED_ARMS_NO": {
+        "emoji": "🙅",
+        "name": "No / Not Allowed",
+        "gesture": "Cross forearms in front of the body.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "OK_ARMS": {
+        "emoji": "🙆",
+        "name": "OK / All Good",
+        "gesture": "Form a circle with arms above or around head.",
+        "hands": 2,
+        "type": "static",
+    },
+    "SHRUG": {
+        "emoji": "🤷",
+        "name": "Shrug / Don't Know",
+        "gesture": "Raise shoulders and turn palms upward.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "FACEPALM": {
+        "emoji": "🤦",
+        "name": "Facepalm",
+        "gesture": "Bring one hand to forehead.",
+        "hands": 1,
+        "type": "static",
+    },
+    "THINKING": {
+        "emoji": "🤔",
+        "name": "Thinking",
+        "gesture": "Rest hand near chin in a thinking pose.",
+        "hands": 1,
+        "type": "static",
+    },
+    "SHUSH": {
+        "emoji": "🤫",
+        "name": "Be Quiet",
+        "gesture": "Place index finger vertically near lips.",
+        "hands": 1,
+        "type": "static",
+    },
+    "SALUTE": {
+        "emoji": "🫡",
+        "name": "Salute",
+        "gesture": "Raise hand to forehead in a salute pose.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "FLEX": {
+        "emoji": "💪",
+        "name": "Strong / Flex",
+        "gesture": "Flex arm to show biceps.",
+        "hands": 1,
+        "type": "static",
+    },
+    "NAIL_POLISH": {
+        "emoji": "💅",
+        "name": "Nail Polish",
+        "gesture": "Raise hand and tilt fingers as if inspecting nails.",
+        "hands": 1,
+        "type": "static",
+    },
+    "SELFIE": {
+        "emoji": "🤳",
+        "name": "Selfie",
+        "gesture": "Hold hand as if holding a phone for a selfie.",
+        "hands": 1,
+        "type": "static",
+    },
+    "RAISED_HAND_BACK": {
+        "emoji": "🤚",
+        "name": "Back of Hand Raised",
+        "gesture": "Raise hand with back facing camera.",
+        "hands": 1,
+        "type": "static",
+    },
+    "VULCAN_ALT": {
+        "emoji": "🖖",
+        "name": "Vulcan Salute Alt",
+        "gesture": "Hold the Vulcan-style finger separation.",
+        "hands": 1,
+        "type": "static",
+    },
+    "THREE_FINGERS": {
+        "emoji": "🤟",
+        "name": "Three Fingers / Love You",
+        "gesture": "Extend thumb, index and little finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "TWO_FINGERS": {
+        "emoji": "✌️",
+        "name": "Two Fingers",
+        "gesture": "Extend index and middle fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "ONE_FINGER": {
+        "emoji": "☝️",
+        "name": "One",
+        "gesture": "Raise one index finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FIVE_FINGERS": {
+        "emoji": "🖐️",
+        "name": "Five",
+        "gesture": "Extend all five fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "ZERO_OK": {
+        "emoji": "👌",
+        "name": "Zero / OK",
+        "gesture": "Make a circle using thumb and index finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "HAND_OVER_HEART": {
+        "emoji": "❤️",
+        "name": "Hand Over Heart",
+        "gesture": "Place a hand over the chest to represent heart/love.",
+        "hands": 1,
+        "type": "static",
+    },
+    "MINI_HEART": {
+        "emoji": "🫰",
+        "name": "Mini Heart",
+        "gesture": "Make a small finger-heart gesture.",
+        "hands": 1,
+        "type": "static",
+    },
+    "WELCOME_ARMS": {
+        "emoji": "👐",
+        "name": "Welcome",
+        "gesture": "Open both arms/hands in a welcoming pose.",
+        "hands": 2,
+        "type": "static",
+    },
+    "GIVE": {
+        "emoji": "🤲",
+        "name": "Give / Offer",
+        "gesture": "Hold cupped palms forward and upward.",
+        "hands": 2,
+        "type": "static",
+    },
+    "PRAY": {
+        "emoji": "🙏",
+        "name": "Pray",
+        "gesture": "Press palms together in front of chest.",
+        "hands": 2,
+        "type": "static",
+    },
+    "CHEER": {
+        "emoji": "🙌",
+        "name": "Celebrate / Hands Up",
+        "gesture": "Raise both hands above head.",
+        "hands": 2,
+        "type": "static",
+    },
+    "SURRENDER": {
+        "emoji": "🙌",
+        "name": "Hands Up / Surrender",
+        "gesture": "Raise both open hands overhead.",
+        "hands": 2,
+        "type": "static",
+    },
+    "STOP_BOTH": {
+        "emoji": "✋",
+        "name": "Stop",
+        "gesture": "Raise open palm toward camera.",
+        "hands": 1,
+        "type": "static",
+    },
+    "WAIT": {
+        "emoji": "✋",
+        "name": "Wait",
+        "gesture": "Hold an open palm forward.",
+        "hands": 1,
+        "type": "static",
+    },
+    "COME_HERE": {
+        "emoji": "👋",
+        "name": "Come Here",
+        "gesture": "Curl fingers inward in a beckoning motion.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "GO_AWAY": {
+        "emoji": "👋",
+        "name": "Go Away",
+        "gesture": "Move an open hand outward.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "POINT_SELF": {
+        "emoji": "🫵",
+        "name": "You / Point at Viewer",
+        "gesture": "Point index finger toward viewer.",
+        "hands": 1,
+        "type": "static",
+    },
+    "POINT_OTHER": {
+        "emoji": "👉",
+        "name": "Point There",
+        "gesture": "Point index finger to the side.",
+        "hands": 1,
+        "type": "static",
+    },
+    "LEFT_HAND_POINT": {
+        "emoji": "👈",
+        "name": "Left Direction",
+        "gesture": "Point left.",
+        "hands": 1,
+        "type": "static",
+    },
+    "RIGHT_HAND_POINT": {
+        "emoji": "👉",
+        "name": "Right Direction",
+        "gesture": "Point right.",
+        "hands": 1,
+        "type": "static",
+    },
+    "UP_DIRECTION": {
+        "emoji": "👆",
+        "name": "Up Direction",
+        "gesture": "Point up.",
+        "hands": 1,
+        "type": "static",
+    },
+    "DOWN_DIRECTION": {
+        "emoji": "👇",
+        "name": "Down Direction",
+        "gesture": "Point down.",
+        "hands": 1,
+        "type": "static",
+    },
+    "TINY": {
+        "emoji": "🤏",
+        "name": "Tiny / Small",
+        "gesture": "Show a small gap between thumb and index finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "PINCH_PICKUP": {
+        "emoji": "🤏",
+        "name": "Pick Up Small Object",
+        "gesture": "Pinch thumb and index as if picking up something tiny.",
+        "hands": 1,
+        "type": "static",
+    },
+    "SNAP_PREP": {
+        "emoji": "🤌",
+        "name": "Snap / Fingers Together",
+        "gesture": "Position thumb and middle finger for a snap.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FINGER_SNAP": {
+        "emoji": "👏",
+        "name": "Snap / Clap Action",
+        "gesture": "Perform a finger snap or clap-like action.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "CROSS_FINGERS_LUCK": {
+        "emoji": "🤞",
+        "name": "Good Luck",
+        "gesture": "Cross index and middle fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "ROCK_HAND": {
+        "emoji": "🤘",
+        "name": "Rock Gesture",
+        "gesture": "Extend index and little finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "PHONE_HAND": {
+        "emoji": "🤙",
+        "name": "Phone / Call",
+        "gesture": "Hold thumb and little finger outward like a phone.",
+        "hands": 1,
+        "type": "static",
+    },
+    "LOVE_SIGN": {
+        "emoji": "🤟",
+        "name": "Love You",
+        "gesture": "Use the thumb-index-little-finger hand sign.",
+        "hands": 1,
+        "type": "static",
+    },
+    "V_SIGN": {
+        "emoji": "✌️",
+        "name": "Victory",
+        "gesture": "Make a V sign.",
+        "hands": 1,
+        "type": "static",
+    },
+    "A_OK": {
+        "emoji": "👌",
+        "name": "All Okay",
+        "gesture": "Make the OK circle.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FIST_BUMP_PREP": {
+        "emoji": "👊",
+        "name": "Fist Bump",
+        "gesture": "Hold fist forward toward camera.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FIST_BUMP": {
+        "emoji": "👊",
+        "name": "Fist Bump Action",
+        "gesture": "Move fist forward toward another fist.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "HANDSHAKE": {
+        "emoji": "🤝",
+        "name": "Handshake",
+        "gesture": "Two people clasp hands; use a two-hand/partner setup.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "WAVE_BOTH": {
+        "emoji": "👋",
+        "name": "Wave Both Hands",
+        "gesture": "Wave both open hands.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "HEART_SHAPE": {
+        "emoji": "🫶",
+        "name": "Heart Shape",
+        "gesture": "Form heart with both hands.",
+        "hands": 2,
+        "type": "static",
+    },
+    "HUG": {
+        "emoji": "🤗",
+        "name": "Hug / Open Arms",
+        "gesture": "Open arms as if inviting a hug.",
+        "hands": 2,
+        "type": "static",
+    },
+    "MUSCLE": {
+        "emoji": "💪",
+        "name": "Muscle",
+        "gesture": "Flex arm.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FINGER_GUN_LEFT": {
+        "emoji": "👉",
+        "name": "Finger Gun Left/Right",
+        "gesture": "Extend index and thumb in a finger-gun-like point.",
+        "hands": 1,
+        "type": "static",
+    },
+    "FINGER_GUN_RIGHT": {
+        "emoji": "👈",
+        "name": "Finger Point",
+        "gesture": "Point index finger laterally.",
+        "hands": 1,
+        "type": "static",
+    },
+    "PEACE_NEAR_FACE": {
+        "emoji": "✌️",
+        "name": "Peace Near Face",
+        "gesture": "Hold V sign near face.",
+        "hands": 1,
+        "type": "static",
+    },
+    "PEACE_TWO_HANDS": {
+        "emoji": "✌️",
+        "name": "Double Peace",
+        "gesture": "Show V signs with both hands.",
+        "hands": 2,
+        "type": "static",
+    },
+    "WISH": {
+        "emoji": "🤞",
+        "name": "Wish / Fingers Crossed",
+        "gesture": "Cross fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "QUIET": {
+        "emoji": "🤫",
+        "name": "Quiet",
+        "gesture": "Index finger to lips.",
+        "hands": 1,
+        "type": "static",
+    },
+    "QUESTION": {
+        "emoji": "🤔",
+        "name": "Question / Thinking",
+        "gesture": "Touch chin with hand.",
+        "hands": 1,
+        "type": "static",
+    },
+    "NOPE": {
+        "emoji": "🙅",
+        "name": "No",
+        "gesture": "Cross arms to indicate no.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "YES_CHEER": {
+        "emoji": "🙌",
+        "name": "Yes / Celebrate",
+        "gesture": "Raise both hands in celebration.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "THANKS": {
+        "emoji": "🙏",
+        "name": "Thank You / Thanks",
+        "gesture": "Press palms together; note this is a common gesture, not universal sign-language translation.",
+        "hands": 2,
+        "type": "static",
+    },
+    "PLEASE": {
+        "emoji": "🙏",
+        "name": "Please",
+        "gesture": "Hands together as a courtesy gesture; sign language varies.",
+        "hands": 2,
+        "type": "static",
+    },
+    "SORRY": {
+        "emoji": "🫶",
+        "name": "Sorry (custom association)",
+        "gesture": "No universal emoji-specific gesture; this is a custom mapping only.",
+        "hands": 2,
+        "type": "static",
+    },
+    "HELLO": {
+        "emoji": "👋",
+        "name": "Hello",
+        "gesture": "Wave hand.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "GOODBYE": {
+        "emoji": "👋",
+        "name": "Goodbye",
+        "gesture": "Wave hand.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "HAPPY": {
+        "emoji": "🙌",
+        "name": "Happy / Celebrate",
+        "gesture": "Raise hands in celebration.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "SAD": {
+        "emoji": "😔",
+        "name": "Sad",
+        "gesture": "Lower head and bring hand near face; visually ambiguous.",
+        "hands": 1,
+        "type": "dynamic",
+    },
+    "I_LOVE_YOU": {
+        "emoji": "🤟",
+        "name": "I Love You Hand Sign",
+        "gesture": "Extend thumb, index and little finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "GOOD_LUCK": {
+        "emoji": "🤞",
+        "name": "Good Luck",
+        "gesture": "Cross index and middle fingers.",
+        "hands": 1,
+        "type": "static",
+    },
+    "APPLAUSE": {
+        "emoji": "👏",
+        "name": "Applause",
+        "gesture": "Clap hands.",
+        "hands": 2,
+        "type": "dynamic",
+    },
+    "WELCOME": {
+        "emoji": "👐",
+        "name": "Welcome",
+        "gesture": "Open both arms/hands.",
+        "hands": 2,
+        "type": "static",
+    },
+    "CALL_ME_AGAIN": {
+        "emoji": "🤙",
+        "name": "Call Me",
+        "gesture": "Extend thumb and little finger.",
+        "hands": 1,
+        "type": "static",
+    },
+    "LOOK_HERE": {
+        "emoji": "🫵",
+        "name": "Look Here",
+        "gesture": "Point index finger toward viewer.",
+        "hands": 1,
+        "type": "static",
+    },
+}
 
 
 @dataclass(frozen=True)
@@ -29,297 +731,73 @@ class EmojiGestureDef:
     class_id: str
     emoji: str
     name: str
-    description: str
-    hands: str          # '1_hand' | '2_hands'
-    type: str           # 'static' | 'dynamic'
-    collection_procedure: str
+    gesture: str
+    hands: int          # 1 or 2
+    type: str           # 'static' or 'dynamic'
+    description: str = ""
+    collection_procedure: str = ""
 
 
-# 30 Distinct, Non-ambiguous Emoji Gesture Classes
+# Canonical object list built from the 100 GESTURE_CLASSES
 EMOJI_CLASSES: List[EmojiGestureDef] = [
     EmojiGestureDef(
-        class_id="EMOJI_01_THUMBS_UP",
-        emoji="👍",
-        name="Thumbs Up",
-        description="Fist closed with thumb extended upright vertically.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Hold fist facing camera at chest level, thumb pointing straight up. Keep wrist stable."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_02_THUMBS_DOWN",
-        emoji="👎",
-        name="Thumbs Down",
-        description="Fist closed with thumb pointing straight down.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Invert fist so the thumb points downward toward the ground. Palm facing inwards/sideways."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_03_OK_HAND",
-        emoji="👌",
-        name="OK Sign",
-        description="Thumb and index fingertip touching in a circle; middle, ring, and pinky extended upward.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Face palm forward or slightly tilted, forming an open circular loop between thumb and index."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_04_PEACE",
-        emoji="✌️",
-        name="Peace / Victory",
-        description="Index and middle fingers extended apart in a V-shape; thumb folds over ring and pinky.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Hold V-shape upright with palm facing camera. Keep index and middle fingers straight."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_05_LOVE_YOU",
-        emoji="🤟",
-        name="Love You (ILY)",
-        description="Thumb, index, and pinky extended; middle and ring fingers folded into palm.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="ASL 'I Love You' sign. Spread thumb, index, and pinky outwards, palm facing camera."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_06_ROCK_ON",
-        emoji="🤘",
-        name="Rock On (Horns)",
-        description="Index and pinky fingers extended; thumb holds down folded middle and ring fingers.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Classic horns sign. Keep thumb clamped over middle two fingers so it does not splay outward."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_07_STOP",
-        emoji="✋",
-        name="Raised Hand / Stop",
-        description="Flat open palm facing forward with all five fingers held together upright.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Present open palm flat toward the camera, fingers aligned together vertically."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_08_FIST",
-        emoji="✊",
-        name="Raised Fist",
-        description="Solid clenched fist held upright with fingers curled tightly into palm, thumb over fingers.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Clench fist firmly with knuckles facing camera or slightly angled."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_09_WAVE",
-        emoji="👋",
-        name="Waving Hand",
-        description="Open hand oscillating side-to-side horizontally at wrist.",
-        hands="1_hand",
-        type="dynamic",
-        collection_procedure="Wave hand left-to-right at a natural conversational speed in front of camera."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_10_HEART_HANDS",
-        emoji="🫶",
-        name="Heart Hands",
-        description="Both hands curved together with thumbs pointing down and fingers meeting to form a heart.",
-        hands="2_hands",
-        type="static",
-        collection_procedure="Bring both hands together at chest level, joining index fingers at top and thumbs at bottom."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_11_PRAYING",
-        emoji="🙏",
-        name="Folded Hands / Please",
-        description="Both flat palms pressed firmly together in prayer/namaste position, fingers pointing up.",
-        hands="2_hands",
-        type="static",
-        collection_procedure="Place palms flush together vertically in front of chest, fingers upright and touching."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_12_CALL_ME",
-        emoji="🤙",
-        name="Call Me / Shaka",
-        description="Thumb and pinky finger fully extended; three middle fingers curled into palm.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Hold hand near cheek or chest with thumb and pinky sticking out sideways."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_13_ONE_ATTENTION",
-        emoji="☝️",
-        name="Index Pointing Up (Palm Forward)",
-        description="Single index finger pointed straight up with palm facing forward.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Raise index finger upright with palm side facing camera. Other fingers closed."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_14_PALMS_UP_GIVING",
-        emoji="🤲",
-        name="Palms Up Together",
-        description="Both open hands held side-by-side with palms facing upwards in a cupping/receiving gesture.",
-        hands="2_hands",
-        type="static",
-        collection_procedure="Hold both open hands flat, palms facing up, side edges almost touching."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_15_HAND_SPLAYED",
-        emoji="🖐️",
-        name="Hand Splayed / Five",
-        description="Palm facing forward with all five fingers spread as wide apart as possible.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Open hand completely with maximum separation between adjacent fingers."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_16_PINCHING",
-        emoji="🤏",
-        name="Pinching Hand",
-        description="Thumb and index finger held closely parallel with a small gap (indicating a tiny amount).",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Hold hand in profile/quarter view, pinching index and thumb about 1-2 cm apart."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_17_POINT_LEFT",
-        emoji="👈",
-        name="Point Left",
-        description="Back of hand facing camera with index finger extended pointing horizontally to the left.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Point index finger firmly to the left side of the screen with knuckles facing viewer."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_18_POINT_RIGHT",
-        emoji="👉",
-        name="Point Right",
-        description="Back of hand facing camera with index finger extended pointing horizontally to the right.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Point index finger firmly to the right side of the screen with knuckles facing viewer."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_19_POINT_UP",
-        emoji="👆",
-        name="Backhand Point Up",
-        description="Back of hand facing camera with index finger pointing vertically upward.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Point index finger straight up with the back of the hand (knuckles) facing camera."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_20_POINT_DOWN",
-        emoji="👇",
-        name="Backhand Point Down",
-        description="Back of hand facing camera with index finger pointing vertically downward.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Point index finger down toward table/floor with back of hand facing camera."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_21_CROSSED_FINGERS",
-        emoji="🤞",
-        name="Crossed Fingers / Luck",
-        description="Middle finger crossed over the back of the extended index finger.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Cross middle finger over index finger, thumb holding ring finger. Face palm to camera."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_22_SHUSHING",
-        emoji="🤫",
-        name="Shushing Face Hand",
-        description="Single index finger held vertically in front of lips/chin.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Place vertical index finger in front of mouth in standard 'shh' posture."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_23_THINKING",
-        emoji="🤔",
-        name="Thinking Hand",
-        description="Thumb and index finger supporting the chin/jaw, middle fingers folded.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Rest thumb and curled index finger under chin/jaw as if pondering."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_24_FLEXED_BICEPS",
-        emoji="💪",
-        name="Flexed Biceps",
-        description="Arm raised and elbow bent at 90 degrees with fist clenched to display flexed bicep.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Raise arm with elbow bent at 90 degrees, fist clenched upward in strong pose."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_25_FINGER_HEART",
-        emoji="🫰",
-        name="Finger Heart",
-        description="Thumb and index finger crossed in a small V-shape forming a miniature heart.",
-        hands="1_hand",
-        type="static",
-        collection_procedure="Korean mini-heart: snap thumb across the first knuckle of index finger, other fingers curled."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_26_OPEN_HANDS",
-        emoji="👐",
-        name="Open Hands / Welcome",
-        description="Both hands held open, palms facing outward toward viewer with fingers spread.",
-        hands="2_hands",
-        type="static",
-        collection_procedure="Raise both open hands at chest level, palms forward, fingers spread in welcoming pose."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_27_GESTURE_NO",
-        emoji="🙅",
-        name="Gesture No / X-Arms",
-        description="Both forearms crossed in front of chest forming a prominent 'X'.",
-        hands="2_hands",
-        type="static",
-        collection_procedure="Cross both wrists/forearms across chest with hands open or in fists forming an 'X'."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_28_GESTURE_OK",
-        emoji="🙆",
-        name="Gesture OK / Overhead O",
-        description="Both arms raised and curved over head with fingertips nearly touching to form an 'O'.",
-        hands="2_hands",
-        type="static",
-        collection_procedure="Curve both arms above head with hands meeting at top to make a large 'O' circle."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_29_CLAPPING",
-        emoji="👏",
-        name="Clapping Hands",
-        description="Two open hands clapping together or held in applauding proximity.",
-        hands="2_hands",
-        type="dynamic",
-        collection_procedure="Clap hands together rhythmically at chest level or hold hands in clasped applause."
-    ),
-    EmojiGestureDef(
-        class_id="EMOJI_30_RAISED_HANDS",
-        emoji="🙌",
-        name="Raising Hands / Celebration",
-        description="Both hands raised high in the air with palms facing forward in triumph.",
-        hands="2_hands",
-        type="static",
-        collection_procedure="Raise both hands up above shoulders with palms facing forward in celebratory praise."
-    ),
+        class_id=k,
+        emoji=v["emoji"],
+        name=v["name"],
+        gesture=v["gesture"],
+        hands=v["hands"],
+        type=v["type"],
+        description=v["gesture"],
+        collection_procedure=f"{v['gesture']} [{'1 Hand' if v['hands'] == 1 else '2 Hands'}, {v['type']}]."
+    )
+    for k, v in GESTURE_CLASSES.items()
 ]
 
-
 CLASS_MAP: Dict[str, EmojiGestureDef] = {item.class_id: item for item in EMOJI_CLASSES}
-CLASS_NAMES: List[str] = [item.class_id for item in EMOJI_CLASSES]
+CLASS_NAMES: List[str] = list(GESTURE_CLASSES.keys())
 
 
-def get_class_by_id(class_id: str) -> Optional[EmojiGestureDef]:
-    return CLASS_MAP.get(class_id)
+def get_class_by_id(key: str) -> Optional[EmojiGestureDef]:
+    """Retrieves gesture definition by exact key or alias with fallback matching."""
+    if not key:
+        return None
+    if key in CLASS_MAP:
+        return CLASS_MAP[key]
+
+    clean = key.strip().upper()
+    if clean in CLASS_MAP:
+        return CLASS_MAP[clean]
+
+    # Handle legacy prefix like EMOJI_01_THUMBS_UP
+    if clean.startswith("EMOJI_"):
+        parts = clean.split("_", 2)
+        if len(parts) >= 3:
+            sub = parts[2]
+            if sub in CLASS_MAP:
+                return CLASS_MAP[sub]
+
+    # Substring search
+    for k, v in CLASS_MAP.items():
+        if k in clean or clean in k:
+            return v
+
+    return None
 
 
 def get_catalog_dict() -> List[dict]:
-    return [asdict(item) for item in EMOJI_CLASSES]
+    return [
+        {
+            "class_id": item.class_id,
+            "emoji": item.emoji,
+            "name": item.name,
+            "gesture": item.gesture,
+            "hands": item.hands,
+            "type": item.type,
+            "description": item.description,
+            "collection_procedure": item.collection_procedure,
+        }
+        for item in EMOJI_CLASSES
+    ]
 
 
 def export_catalog_json(output_path: str) -> None:
@@ -328,6 +806,6 @@ def export_catalog_json(output_path: str) -> None:
 
 
 if __name__ == "__main__":
-    print(f"Total Emoji Gesture Classes Defined: {len(EMOJI_CLASSES)}")
-    for i, c in enumerate(EMOJI_CLASSES, 1):
-        print(f"  {i:>2}. {c.emoji} {c.name:<30} [{c.hands}, {c.type}] -> {c.class_id}")
+    print(f"Defined gesture classes: {len(GESTURE_CLASSES)}")
+    for key, value in GESTURE_CLASSES.items():
+        print(f'{value["emoji"]}  {key}: {value["name"]} — {value["gesture"]}')

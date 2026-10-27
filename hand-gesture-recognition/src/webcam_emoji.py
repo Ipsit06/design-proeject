@@ -273,7 +273,7 @@ def main() -> None:
                 if info:
                     current_emoji = info.emoji
                     current_name = info.name
-                    current_hands = "1 Hand" if info.hands == "1_hand" else "2 Hands"
+                    current_hands = "2 Hands" if (info.hands == 2 or str(info.hands).startswith("2")) else "1 Hand"
                 else:
                     current_emoji = "✋"
                     current_name = most_common_class

@@ -77,9 +77,9 @@ python src/predict.py path/to/image.jpg
 python src/webcam.py
 
 # -------------------------------------------------------------
-# PIPELINE B: 30 EMOJI HAND GESTURES & COMMUNICATION MODE
+# PIPELINE B: 100 GESTURE-TO-EMOJI MAPPING CATALOGUE & WEBCAM COMMUNICATOR
 # -------------------------------------------------------------
-# 6. Collect real webcam samples across 30 emoji classes
+# 6. Collect real webcam samples across the 100 emoji gesture classes
 python src/collect_emoji.py
 
 # 7. Train the Emoji Gesture model
@@ -97,43 +97,16 @@ python src/webcam_emoji.py
 
 ---
 
-## 30 Emoji Hand Gesture Recognition & Communication System
+## 100 Gesture-to-Emoji Mapping Catalogue & Communication System
 
-### 1. Canonical 30 Emoji Classes
-The emoji system features 30 non-ambiguous, anatomically defined hand gesture classes:
+The system integrates a full **100 gesture-to-emoji mapping catalogue** defined in `src/emoji_catalog.py` and exported to `models/emoji_catalog.json`.
 
-| # | Emoji | Gesture Name | Hand Count | Motion Type | Class ID |
-|---|---|---|---|---|---|
-| 1 | 👍 | Thumbs Up | 1 Hand | Static | `EMOJI_01_THUMBS_UP` |
-| 2 | 👎 | Thumbs Down | 1 Hand | Static | `EMOJI_02_THUMBS_DOWN` |
-| 3 | 👌 | OK Sign | 1 Hand | Static | `EMOJI_03_OK_HAND` |
-| 4 | ✌️ | Peace / Victory | 1 Hand | Static | `EMOJI_04_PEACE` |
-| 5 | 🤟 | Love You (ILY) | 1 Hand | Static | `EMOJI_05_LOVE_YOU` |
-| 6 | 🤘 | Rock On (Horns) | 1 Hand | Static | `EMOJI_06_ROCK_ON` |
-| 7 | ✋ | Raised Hand / Stop | 1 Hand | Static | `EMOJI_07_RAISED_HAND` |
-| 8 | ✊ | Raised Fist | 1 Hand | Static | `EMOJI_08_RAISED_FIST` |
-| 9 | 👋 | Waving Hand | 1 Hand | Dynamic | `EMOJI_09_WAVE` |
-| 10 | 🫶 | Heart Hands | 2 Hands | Static | `EMOJI_10_HEART_HANDS` |
-| 11 | 🙏 | Folded Hands / Please | 2 Hands | Static | `EMOJI_11_FOLDED_HANDS` |
-| 12 | 🤙 | Call Me / Shaka | 1 Hand | Static | `EMOJI_12_CALL_ME` |
-| 13 | ☝️ | Point Up (Palm Forward) | 1 Hand | Static | `EMOJI_13_POINT_UP_PALM_FORWARD` |
-| 14 | 🤲 | Palms Up Together | 2 Hands | Static | `EMOJI_14_PALMS_UP_TOGETHER` |
-| 15 | 🖐️ | Hand Splayed / Five | 1 Hand | Static | `EMOJI_15_HAND_SPLAYED` |
-| 16 | 🤏 | Pinching Hand | 1 Hand | Static | `EMOJI_16_PINCH` |
-| 17 | 👈 | Point Left | 1 Hand | Static | `EMOJI_17_POINT_LEFT` |
-| 18 | 👉 | Point Right | 1 Hand | Static | `EMOJI_18_POINT_RIGHT` |
-| 19 | 👆 | Backhand Point Up | 1 Hand | Static | `EMOJI_19_POINT_UP` |
-| 20 | 👇 | Backhand Point Down | 1 Hand | Static | `EMOJI_20_POINT_DOWN` |
-| 21 | 🤞 | Crossed Fingers / Luck | 1 Hand | Static | `EMOJI_21_CROSSED_FINGERS` |
-| 22 | 🤫 | Shushing Face Hand | 1 Hand | Static | `EMOJI_22_SHUSHING` |
-| 23 | 🤔 | Thinking Hand | 1 Hand | Static | `EMOJI_23_THINKING` |
-| 24 | 💪 | Flexed Biceps | 1 Hand | Static | `EMOJI_24_FLEXED_BICEPS` |
-| 25 | 🫰 | Finger Heart | 1 Hand | Static | `EMOJI_25_FINGER_HEART` |
-| 26 | 👐 | Open Hands / Welcome | 2 Hands | Static | `EMOJI_26_OPEN_HANDS` |
-| 27 | 🙅 | Gesture No / X-Arms | 2 Hands | Static | `EMOJI_27_GESTURE_NO` |
-| 28 | 🙆 | Gesture OK / Overhead O | 2 Hands | Static | `EMOJI_28_GESTURE_OK` |
-| 29 | 👏 | Clapping Hands | 2 Hands | Dynamic | `EMOJI_29_CLAPPING` |
-| 30 | 🙌 | Raising Hands / Celebration | 2 Hands | Static | `EMOJI_30_RAISED_HANDS` |
+### Design Catalogue Properties
+- **Total Classes:** 100 mapped gesture classes
+- **Single-Hand Gestures:** 1-hand poses with automated $280 \times 280$ ROI centering
+- **Two-Hand Gestures:** 2-hand poses (e.g., Folded Hands 🙏, Heart Hands 🫶, Palms Up 🤲, Open Hands 👐, Crossed Arms 🙅, Overhead OK 🙆, Clapping 👏, Hug 🤗, Fist Bump 👊, Handshake 🤝) with automated $500 \times 310$ wide ROI
+- **Dynamics:** Both static hand shapes and dynamic temporal motions (e.g. Wave 👋, Clap 👏, Salute 🫡, Shrug 🤷)
+- **Native TrueType HUD:** Windows Segoe UI Emoji (`seguiemj.ttf`) integration renders genuine, crisp Unicode emojis on the OpenCV video feed.
 
 ---
 

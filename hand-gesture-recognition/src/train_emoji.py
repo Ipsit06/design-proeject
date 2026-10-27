@@ -112,7 +112,7 @@ def main() -> None:
     args = parser.parse_args()
 
     print("=" * 70)
-    print("  30 Emoji Hand Gesture Recognition -- Training Pipeline")
+    print(f"  {len(EMOJI_CLASSES)} Emoji Hand Gesture Recognition -- Training Pipeline")
     print("=" * 70)
 
     # Export catalog reference
@@ -125,11 +125,12 @@ def main() -> None:
     print(f"  Target Emoji Classes Defined: {len(EMOJI_CLASSES)}")
     print(f"  Total Image Samples Found:    {total_samples}")
     print("-" * 70)
-    print(f"{'#':<3} {'Emoji':<6} {'Name':<28} {'Hands':<9} {'Type':<8} {'Samples'}")
+    print(f"{'#':<4} {'Emoji':<6} {'Name':<28} {'Hands':<9} {'Type':<8} {'Samples'}")
     print("-" * 70)
     for i, c in enumerate(EMOJI_CLASSES, 1):
         cnt = counts.get(c.class_id, 0)
-        print(f"{i:<3} {c.emoji:<6} {c.name:<28} {c.hands:<9} {c.type:<8} {cnt}")
+        hands_str = f"{c.hands} Hand" if c.hands == 1 else f"{c.hands} Hands"
+        print(f"{i:<4} {c.emoji:<6} {c.name:<28} {hands_str:<9} {c.type:<8} {cnt}")
     print("-" * 70)
 
     # Check sample threshold
