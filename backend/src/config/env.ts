@@ -13,9 +13,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
   DB_PATH: z.string().default('data/signbridge.db'),
-  SANKET_PYTHON: z.string().default(resolve(process.cwd(), '.venv', 'Scripts', 'python.exe')),
-  SANKET_WORKER: z.string().default(resolve(process.cwd(), 'backend', 'sanket', 'infer.py')),
-  SANKET_TEMP_DIR: z.string().default(resolve(process.cwd(), 'backend', 'sanket', 'tmp')),
+  GEMINI_API_KEY: z.string().optional(),
 });
 
 export const env = envSchema.parse({
@@ -23,7 +21,5 @@ export const env = envSchema.parse({
   NODE_ENV: process.env.NODE_ENV,
   CORS_ORIGIN: process.env.CORS_ORIGIN,
   DB_PATH: process.env.DB_PATH,
-  SANKET_PYTHON: process.env.SANKET_PYTHON,
-  SANKET_WORKER: process.env.SANKET_WORKER,
-  SANKET_TEMP_DIR: process.env.SANKET_TEMP_DIR,
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
 });

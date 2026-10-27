@@ -44,7 +44,9 @@ export const updateSettingsSchema = z
       .max(0.95, 'Confidence threshold cannot exceed 0.95')
       .optional(),
     autoSpeak: z.boolean().optional(),
-    recognitionMode: z.enum(['generic', 'sign_language', 'custom_static', 'custom_sequence']).optional(),
+    recognitionMode: z
+      .enum(['harshil_asl', 'harshil_hci', 'generic', 'sign_language', 'custom_static', 'custom_sequence'])
+      .optional(),
     aiAssistanceEnabled: z.boolean().optional(),
     holdTimeMs: z.number().min(150).max(2000).optional(),
     numHands: z.union([z.literal(1), z.literal(2)]).optional(),
@@ -85,7 +87,10 @@ export const updateSessionSchema = z.object({
 export const llmAssistSchema = z.object({
   tokens: z.array(z.string()).min(1, 'At least one token is required for assistance'),
   vocabularyId: z.string().optional(),
-  mode: z.enum(['generic', 'sign_language', 'custom_static', 'custom_sequence']).optional().default('sign_language'),
+  mode: z
+    .enum(['harshil_asl', 'harshil_hci', 'generic', 'sign_language', 'custom_static', 'custom_sequence'])
+    .optional()
+    .default('harshil_asl'),
   contextSentence: z.string().optional(),
 });
 

@@ -8,9 +8,10 @@ export function getHealth(_req: Request, res: Response<HealthResponse>): void {
   res.json({
     status: 'ok',
     uptime: process.uptime(),
-    version: '1.1.0',
+    version: '2.0.0',
     database: 'connected',
     engine: ctx.engine,
-    sanketConfigured: true,
+    llmConfigured: Boolean(env.GEMINI_API_KEY),
+    harshilModelsLoaded: true,
   });
 }

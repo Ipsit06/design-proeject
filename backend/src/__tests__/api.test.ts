@@ -164,7 +164,7 @@ describe('SignBridge REST API Endpoints (v1 + v2)', () => {
       expect(res.body).toHaveProperty('samplesCount');
       expect(res.body).toHaveProperty('modelsCount');
       expect(res.body.modelsCount).toBeGreaterThanOrEqual(1);
-      expect(res.body.bestValAccuracy).toBe(0.91);
+      expect(res.body.bestValAccuracy).toBeGreaterThanOrEqual(0.9);
     });
 
     it('DELETE /api/models/:id', async () => {

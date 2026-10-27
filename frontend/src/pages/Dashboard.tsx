@@ -57,14 +57,11 @@ export const Dashboard: React.FC = () => {
     fetchDashboardData();
   }, []);
 
-  const aslVerified = gestures.filter(
-    (g) => (g.language === 'ASL' || g.type === 'asl_letter' || g.type === 'asl_word') && g.status === 'implemented_tested'
+  const aslLetters = gestures.filter((g) => g.category.startsWith('ASL_'));
+  const hciGestures = gestures.filter((g) => g.category.startsWith('HCI_'));
+  const otherGestures = gestures.filter(
+    (g) => !g.category.startsWith('ASL_') && !g.category.startsWith('HCI_')
   );
-  const genericGestures = gestures.filter(
-    (g) => g.type === 'generic_gesture' || (!g.type && !g.category.startsWith('ASL_'))
-  );
-  const experimentalGestures = gestures.filter((g) => g.status === 'model_available_unverified');
-  const plannedGestures = gestures.filter((g) => g.status === 'planned');
 
   return (
     <div className="space-y-8">
@@ -75,17 +72,17 @@ export const Dashboard: React.FC = () => {
         <div className="relative max-w-3xl">
           <Badge variant="default" className="mb-4 border-white/20 bg-white/10 text-white">
             <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[#b9edc9]" />
-            AI sign language workspace
+            Harshil Hand Gesture Studio
           </Badge>
           <h1
             tabIndex={-1}
             id="page-main-heading"
             className="text-3xl sm:text-5xl font-bold text-white tracking-[-0.035em] leading-[1.05] focus:outline-none"
           >
-            Real-time Sign Language Translation
+            Human-Computer Interaction & ASL Writing
           </h1>
           <p className="text-base text-white/75 mt-4 leading-relaxed max-w-2xl">
-            Turn hand movements into meaningful communication with private, real-time landmark recognition.
+            Real-time hand gesture studio powered by Harshil's trained neural network models. Control your computer with gestures or write words using the ASL manual alphabet.
           </p>
         </div>
 
@@ -97,14 +94,14 @@ export const Dashboard: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-ink">Continuous Live Translator</h2>
+                <h2 className="text-lg font-bold text-ink">Harshil Hand Gesture Studio</h2>
                 <span className="flex items-center gap-1 text-[11px] font-semibold text-forest bg-sage px-2.5 py-1 rounded-full">
                   <span className="w-1.5 h-1.5 rounded-full bg-forest animate-pulse" />
-                  ASL Pipeline Active
+                  HCI + ASL Models Loaded
                 </span>
               </div>
               <p className="text-sm text-ink-secondary mt-1.5 max-w-lg leading-relaxed">
-                Translate fingerspelling and custom vocabulary with instant speech playback and history logging.
+                Launch the studio for real-time ASL letter-to-word writing and interactive HCI gesture controls (volume, tracking, zoom, clicks).
               </p>
             </div>
           </div>
@@ -327,17 +324,17 @@ export const Dashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-ink flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-status-success" />
-                  ASL Verified Alphabet & Signs ({aslVerified.length})
+                  Harshil ASL Alphabet Letters ({aslLetters.length})
                 </span>
-                <span className="text-[11px] text-forest font-semibold">ASL Geometry Model</span>
+                <span className="text-[11px] text-forest font-semibold">Trained asl_model</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
-                {aslVerified.map((g) => (
+                {aslLetters.map((g) => (
                   <span
                     key={g.category}
-                    className="text-xs bg-sage/60 border border-forest/20 text-forest px-2.5 py-1 rounded-btn font-medium"
+                    className="text-xs bg-sage/60 border border-forest/20 text-forest px-2.5 py-1 rounded-btn font-bold font-mono"
                   >
-                    {g.category.replace(/^ASL_/, '')} → &ldquo;{g.text}&rdquo;
+                    {g.text}
                   </span>
                 ))}
               </div>
@@ -346,41 +343,43 @@ export const Dashboard: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-ink flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  Generic Posture Baseline ({genericGestures.length})
+                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                  Harshil HCI Gestures & Actions ({hciGestures.length})
                 </span>
-                <span className="text-[11px] text-ink-muted">MediaPipe Model</span>
+                <span className="text-[11px] text-purple-700 font-semibold">Trained gesture_model</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
-                {genericGestures.map((g) => (
+                {hciGestures.map((g) => (
                   <span
                     key={g.category}
-                    className="text-xs bg-page border border-line text-ink-secondary px-2 py-0.5 rounded-btn"
+                    className="text-xs bg-purple-50 border border-purple-200 text-purple-900 px-2 py-0.5 rounded-btn font-medium"
                   >
-                    {g.category.replace(/_/g, ' ')}
+                    {g.text}
                   </span>
                 ))}
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-ink flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-status-warning" />
-                  Experimental ({experimentalGestures.length}) & Planned ({plannedGestures.length})
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {experimentalGestures.concat(plannedGestures).map((g) => (
-                  <span
-                    key={g.category}
-                    className="text-xs bg-page/40 border border-line text-ink-muted px-2 py-0.5 rounded-btn"
-                  >
-                    {g.category.replace(/^ASL_/, '').replace(/_/g, ' ')}
+            {otherGestures.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-ink flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-400" />
+                    Additional Gestures ({otherGestures.length})
                   </span>
-                ))}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {otherGestures.map((g) => (
+                    <span
+                      key={g.category}
+                      className="text-xs bg-page border border-line text-ink-muted px-2 py-0.5 rounded-btn"
+                    >
+                      {g.text}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </Card>
         </div>
       </div>

@@ -101,21 +101,21 @@ export const About: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
           <div className="p-3.5 bg-sage/30 rounded-btn border border-forest/20">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-bold text-forest">ASL Spatial-Geometric Adapter</span>
-              <Badge variant="success">Validated ASL</Badge>
+              <span className="font-bold text-forest">Harshil ASL Writing Model (asl_model.h5)</span>
+              <Badge variant="success">26 Letters A–Z</Badge>
             </div>
             <p className="text-ink-secondary text-xs leading-relaxed">
-              Computes normalized bone angles, finger flexions, thumb abduction, and inter-finger proximities for verified ASL manual alphabet letters (A, B, C, D, I, L, O, U, V, W, Y) and conversational signs (Hello, Thank you, Yes, No).
+              3-Layer Dense Neural Network (256-128-26) trained on 63 normalized landmark features (wrist-relative + max-absolute scaling). Enables letter stabilization (5-frame hold) and continuous word composition.
             </p>
           </div>
 
-          <div className="p-3.5 bg-page rounded-btn border border-line">
+          <div className="p-3.5 bg-purple-50/60 rounded-btn border border-purple-200">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-bold text-ink">MediaPipe Generic Adapter</span>
-              <Badge variant="neutral">Generic Gestures</Badge>
+              <span className="font-bold text-purple-900">Harshil HCI Gesture Model (gesture_model.h5)</span>
+              <Badge variant="neutral">9 HCI Actions</Badge>
             </div>
             <p className="text-ink-secondary text-xs leading-relaxed">
-              Pre-trained MediaPipe Gesture Recognizer detecting generic universal hand poses (Open_Palm, Closed_Fist, Thumb_Up, etc.). Preserved as an accessible baseline fallback.
+              Trained classifier for Human-Computer Interaction: Volume Up/Down (thumbs up/down), Page Scroll (open palm), Virtual Cursor Tracking (two fingers), Zoom Mode (victory/pinch), and Left/Right Click (pinch/ok sign).
             </p>
           </div>
         </div>

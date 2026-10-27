@@ -21,3 +21,7 @@ alphabet_dataset/
 dataset/
 frontend/dist/
 coverage/
+.keras/
+hand-gesture-recognition/.keras/
+hand-gesture-recognition/dataset_emoji/
+

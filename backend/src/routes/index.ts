@@ -8,7 +8,7 @@ import statsRoutes from './stats.routes.js';
 import samplesRoutes from './samples.routes.js';
 import modelsRoutes from './models.routes.js';
 import evalRunsRoutes from './evalRuns.routes.js';
-import sanketRoutes from './sanket.routes.js';
+import llmRoutes from './llm.routes.js';
 
 const apiRouter = Router();
 
@@ -21,6 +21,6 @@ apiRouter.use('/stats', statsRoutes);
 apiRouter.use('/samples', samplesRoutes);
 apiRouter.use('/models', modelsRoutes);
 apiRouter.use('/eval-runs', evalRunsRoutes);
-apiRouter.use('/sanket', sanketRoutes);
+apiRouter.use('/llm', llmRoutes);
 
 export default apiRouter;

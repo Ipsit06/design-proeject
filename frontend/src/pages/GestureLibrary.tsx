@@ -16,7 +16,7 @@ import { useToast } from '../components/ui/Toast.js';
 import { gesturesApi } from '../services/gesturesApi.js';
 import type { GestureMapping } from '@signbridge/shared';
 
-type LibraryTab = 'all' | 'asl_vocabulary' | 'generic_gestures' | 'experimental' | 'planned';
+type LibraryTab = 'all' | 'asl_alphabet' | 'hci_gestures' | 'other';
 
 export const GestureLibrary: React.FC = () => {
   const { showToast } = useToast();
@@ -81,20 +81,14 @@ export const GestureLibrary: React.FC = () => {
   // Filter items by tab
   const filteredGestures = gestures.filter((g) => {
     if (activeTab === 'all') return true;
-    if (activeTab === 'asl_vocabulary') {
-      return (
-        (g.type === 'asl_letter' || g.type === 'asl_word' || g.language === 'ASL') &&
-        g.status === 'implemented_tested'
-      );
+    if (activeTab === 'asl_alphabet') {
+      return g.category.startsWith('ASL_');
     }
-    if (activeTab === 'generic_gestures') {
-      return g.type === 'generic_gesture' || (!g.type && !g.category.startsWith('ASL_'));
+    if (activeTab === 'hci_gestures') {
+      return g.category.startsWith('HCI_');
     }
-    if (activeTab === 'experimental') {
-      return g.status === 'model_available_unverified';
-    }
-    if (activeTab === 'planned') {
-      return g.status === 'planned';
+    if (activeTab === 'other') {
+      return !g.category.startsWith('ASL_') && !g.category.startsWith('HCI_');
     }
     return true;
   });
@@ -126,11 +120,10 @@ export const GestureLibrary: React.FC = () => {
 
         <div className="flex flex-wrap border border-line rounded-btn overflow-hidden bg-page text-xs font-medium">
           {[
-            { id: 'all', label: `All Vocabulary (${gestures.length})` },
-            { id: 'asl_vocabulary', label: 'Verified ASL (Tested)' },
-            { id: 'generic_gestures', label: 'Generic Gestures' },
-            { id: 'experimental', label: 'Experimental' },
-            { id: 'planned', label: 'Planned Roadmap' },
+            { id: 'all', label: `All Gestures (${gestures.length})` },
+            { id: 'asl_alphabet', label: 'Harshil ASL Alphabet (26 Letters)' },
+            { id: 'hci_gestures', label: 'Harshil HCI Actions (9 Gestures)' },
+            { id: 'other', label: 'Custom / Other' },
           ].map((tab) => (
             <button
               key={tab.id}

@@ -1,11 +1,12 @@
 export type HistorySource = 'live' | 'demo' | 'experimental';
 
 export type RecognitionMode =
-  | 'generic'
+  | 'harshil_asl'
+  | 'harshil_hci'
   | 'sign_language'
+  | 'generic'
   | 'custom_static'
-  | 'custom_sequence'
-  | 'sanket_video';
+  | 'custom_sequence';
 
 export type GestureCategoryType =
   | 'generic_gesture'
@@ -111,7 +112,8 @@ export interface HealthResponse {
   version: string;
   database: 'connected' | 'disconnected';
   engine: 'better-sqlite3' | 'json-file-fallback';
-  sanketConfigured: boolean;
+  llmConfigured?: boolean;
+  harshilModelsLoaded?: boolean;
 }
 
 // Legacy language assistance types retained for stored API compatibility.
