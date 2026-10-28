@@ -45,14 +45,14 @@ export const Translator: React.FC = () => {
   const [recognitionMode, setRecognitionMode] = useState<RecognitionMode>('harshil_asl');
   const [sessionId, setSessionId] = useState<string | null>(null);
 
-  // ASL Writing Mode state (Harshil asl_model)
+  // ASL Writing Mode state (Translator model)
   const [detectedWord, setDetectedWord] = useState<string>('');
   const [aslStableCount, setAslStableCount] = useState<number>(0);
   const prevAslLetterRef = useRef<string | null>(null);
   const stableCountRef = useRef<number>(0);
   const lastAslCommitTimeRef = useRef<number>(0);
 
-  // HCI Mode state (Harshil gesture_model)
+  // HCI Mode state (Translator gesture model)
   const [hciModeState, setHciModeState] = useState<'idle' | 'tracking' | 'zoom'>('idle');
   const [volumeLevel, setVolumeLevel] = useState<number>(60);
   const [zoomScale, setZoomScale] = useState<number>(100);
@@ -144,7 +144,6 @@ export const Translator: React.FC = () => {
     }
 
     const hand = frame.landmarks[0];
-    const now = performance.now();
 
     // 1. If in HCI Tracking Mode: update virtual cursor with index fingertip (landmark 8)
     if (hciModeState === 'tracking') {
@@ -155,16 +154,16 @@ export const Translator: React.FC = () => {
       setVirtualCursor({ x: cursorX, y: cursorY });
     }
 
-    // 2. If in HCI Zoom Mode: pinch distance between thumb (4) and index (8)
+    // 2. If in HCI Zoom Mode: hand openness (thumb tip to pinky tip distance) – easy to detect
     if (hciModeState === 'zoom') {
-      const thumb = hand[4];
-      const indexTip = hand[8];
-      const dx = thumb.x - indexTip.x;
-      const dy = thumb.y - indexTip.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const thumbTip = hand[4];
+      const pinkyTip = hand[20];
+      const dx = thumbTip.x - pinkyTip.x;
+      const dy = thumbTip.y - pinkyTip.y;
+      const openDist = Math.sqrt(dx * dx + dy * dy);
 
       if (prevPinchDistRef.current !== null) {
-        const delta = dist - prevPinchDistRef.current;
+        const delta = openDist - prevPinchDistRef.current;
         if (Math.abs(delta) > 0.015) {
           if (delta > 0) {
             setZoomScale((z) => Math.min(180, z + 5));
@@ -175,7 +174,7 @@ export const Translator: React.FC = () => {
           }
         }
       }
-      prevPinchDistRef.current = dist;
+      prevPinchDistRef.current = openDist;
     }
   }, [hciModeState]);
 
@@ -184,7 +183,7 @@ export const Translator: React.FC = () => {
     const now = performance.now();
 
     // ==========================================
-    // A. ASL WRITING MODE (Harshil ASL Model)
+    // A. ASL WRITING MODE (Translator Model)
     // ==========================================
     if (recognitionMode === 'harshil_asl') {
       const letter = result.label.toUpperCase();
@@ -197,7 +196,7 @@ export const Translator: React.FC = () => {
       }
       setAslStableCount(stableCountRef.current);
 
-      // Harshil STABLE_THRESHOLD = 5 frames to commit letter
+      // STABLE_THRESHOLD = 5 frames to commit letter
       if (
         stableCountRef.current >= 5 &&
         result.confidence >= 0.75 &&
@@ -216,7 +215,7 @@ export const Translator: React.FC = () => {
     }
 
     // ==========================================
-    // B. HCI GESTURE CONTROL MODE (Harshil Gesture Model)
+    // B. HCI GESTURE CONTROL MODE (Translator Model)
     // ==========================================
     else if (recognitionMode === 'harshil_hci') {
       const gesture = result.label.toLowerCase();
@@ -234,7 +233,7 @@ export const Translator: React.FC = () => {
         lastHciActionTimeRef.current = now;
       } else if (gesture === 'victory') {
         setHciModeState('zoom');
-        setLastActionMessage('Zoom Mode ENABLED — Pinch fingers to zoom in/out');
+        setLastActionMessage('Zoom Mode ENABLED — Open/close hand to zoom in/out');
         playBeep(750);
         lastHciActionTimeRef.current = now;
       } else if (gesture === 'fist') {
@@ -278,7 +277,7 @@ export const Translator: React.FC = () => {
     }
   }, [recognitionMode, settings.autoSpeak, speakWord, playBeep, virtualCursor]);
 
-  // Word Buffer Controls (Harshil ASL Writing Mode)
+  // Word Buffer Controls (ASL Writing Mode)
   const handleAddSpace = () => {
     setDetectedWord((prev) => prev + ' ');
   };
@@ -335,7 +334,7 @@ export const Translator: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="Hand Gesture Studio — HCI + ASL Writing"
-        description="Real-time hand gesture recognition powered by Harshil's trained neural network models for Human-Computer Interaction and ASL writing."
+        description="Real-time hand gesture recognition powered by trained neural network models for Human-Computer Interaction and ASL writing."
       />
 
       {/* Model Mode Switcher Bar */}
@@ -391,7 +390,7 @@ export const Translator: React.FC = () => {
               ASL
             </div>
             <div>
-              <h3 className="text-sm font-bold text-ink">ASL Writing Mode (Harshil ASL Model)</h3>
+              <h3 className="text-sm font-bold text-ink">ASL Writing Mode</h3>
               <p className="text-xs text-ink-secondary">
                 Recognizes all 26 ASL alphabet letters (A–Z). Hold a letter for 5 frames to append to the Word buffer.
               </p>
@@ -415,9 +414,9 @@ export const Translator: React.FC = () => {
               HCI
             </div>
             <div>
-              <h3 className="text-sm font-bold text-ink">HCI Gesture Control Studio (Harshil Gesture Model)</h3>
+              <h3 className="text-sm font-bold text-ink">HCI Gesture Control Studio</h3>
               <p className="text-xs text-ink-secondary">
-                9 Actions: Thumbs Up (Vol+), Thumbs Down (Vol-), Open Palm (Scroll), Two Fingers (Tracking), Victory (Zoom), Pinch (Click).
+                9 Actions: Thumbs Up (Vol+), Thumbs Down (Vol-), Open Palm (Scroll), Two Fingers (Tracking), 3 Fingers 🤟 (Zoom), Pinch (Click).
               </p>
             </div>
           </div>
@@ -507,7 +506,7 @@ export const Translator: React.FC = () => {
         {/* Right Column: Mode Controls & Interactive HUD */}
         <div className="lg:col-span-5 space-y-4">
           {/* ======================================================== */}
-          {/* ASL WRITING MODE PANEL (Harshil ASL Model)               */}
+          {/* ASL WRITING MODE PANEL                                   */}
           {/* ======================================================== */}
           {recognitionMode === 'harshil_asl' && (
             <div className="rounded-card border border-line bg-card p-5 space-y-4 shadow-sm">
@@ -584,10 +583,10 @@ export const Translator: React.FC = () => {
                 </Button>
               </div>
 
-              {/* Harshil Model Info Box */}
+              {/* Translator Model Info Box */}
               <div className="p-3 bg-sage/40 rounded-btn border border-forest/20 text-xs text-ink-secondary space-y-1">
                 <div className="font-semibold text-forest flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5" /> Harshil ASL Model Active
+                  <CheckCircle className="w-3.5 h-3.5" /> Translator Model Active
                 </div>
                 <p>
                   Features: 21 Landmarks $\rightarrow$ Wrist Relative $\rightarrow$ Max Absolute Normalization (63 floats) $\rightarrow$ 3-Layer Dense Neural Net (256-128-26).
@@ -597,7 +596,7 @@ export const Translator: React.FC = () => {
           )}
 
           {/* ======================================================== */}
-          {/* HCI GESTURE CONTROL STUDIO PANEL (Harshil Gesture Model)  */}
+          {/* HCI GESTURE CONTROL STUDIO PANEL                         */}
           {/* ======================================================== */}
           {recognitionMode === 'harshil_hci' && (
             <div className="rounded-card border border-line bg-card p-5 space-y-5 shadow-sm">
@@ -650,7 +649,7 @@ export const Translator: React.FC = () => {
                 <div className="flex items-center justify-between text-xs font-bold text-ink">
                   <span className="flex items-center gap-1.5">
                     <ZoomIn className="w-4 h-4 text-amber-600" />
-                    Camera Viewport Zoom (Victory + Pinch Distance)
+                    Camera Viewport Zoom (3 Fingers + Hand Openness)
                   </span>
                   <span className="font-mono">{zoomScale}%</span>
                 </div>
@@ -661,7 +660,7 @@ export const Translator: React.FC = () => {
                   />
                 </div>
                 <div className="flex justify-between text-[11px] text-ink-secondary">
-                  <span>✌️ Victory (Activates Zoom Mode)</span>
+                  <span>🤟 3 Fingers (Index+Middle+Ring → Activates Zoom)</span>
                   <button onClick={() => setZoomScale(100)} className="underline hover:text-ink">
                     Reset (100%)
                   </button>

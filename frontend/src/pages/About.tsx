@@ -101,7 +101,7 @@ export const About: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
           <div className="p-3.5 bg-sage/30 rounded-btn border border-forest/20">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-bold text-forest">Harshil ASL Writing Model (asl_model.h5)</span>
+              <span className="font-bold text-forest">ASL Writing Model (asl_model.h5)</span>
               <Badge variant="success">26 Letters A–Z</Badge>
             </div>
             <p className="text-ink-secondary text-xs leading-relaxed">
@@ -111,11 +111,11 @@ export const About: React.FC = () => {
 
           <div className="p-3.5 bg-purple-50/60 rounded-btn border border-purple-200">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-bold text-purple-900">Harshil HCI Gesture Model (gesture_model.h5)</span>
+              <span className="font-bold text-purple-900">HCI Gesture Model (gesture_model.h5)</span>
               <Badge variant="neutral">9 HCI Actions</Badge>
             </div>
             <p className="text-ink-secondary text-xs leading-relaxed">
-              Trained classifier for Human-Computer Interaction: Volume Up/Down (thumbs up/down), Page Scroll (open palm), Virtual Cursor Tracking (two fingers), Zoom Mode (victory/pinch), and Left/Right Click (pinch/ok sign).
+              Trained classifier for Human-Computer Interaction: Volume Up/Down (thumbs up/down), Page Scroll (open palm), Virtual Cursor Tracking (two fingers), Zoom Mode (pointing ☝️ + hand openness), and Left/Right Click (pinch/ok sign).
             </p>
           </div>
         </div>

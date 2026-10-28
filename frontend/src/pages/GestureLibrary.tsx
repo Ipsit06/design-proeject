@@ -124,8 +124,8 @@ export const GestureLibrary: React.FC = () => {
         <div className="flex flex-wrap border border-line rounded-btn overflow-hidden bg-page text-xs font-medium">
           {[
             { id: 'all', label: `All Gestures (${gestures.length})` },
-            { id: 'asl_alphabet', label: 'Harshil ASL Alphabet (26 Letters)' },
-            { id: 'hci_gestures', label: 'Harshil HCI Actions (9 Gestures)' },
+            { id: 'asl_alphabet', label: 'ASL Alphabet (26 Letters)' },
+            { id: 'hci_gestures', label: 'HCI Actions (9 Gestures)' },
             { id: 'emoji_catalog', label: '100 Emoji Gesture Catalog' },
             { id: 'other', label: 'Custom / Other' },
           ].map((tab) => (

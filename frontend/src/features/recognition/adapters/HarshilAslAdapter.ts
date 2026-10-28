@@ -3,7 +3,7 @@ import { predictAslLetter, ASL_LABELS, isAslReady, loadHarshilModels } from '../
 
 export class HarshilAslAdapter implements RecognitionAdapter {
   id = 'harshil_asl_model';
-  name = 'Harshil ASL Alphabet (A-Z)';
+  name = 'ASL Alphabet (A-Z)';
   mode: 'harshil_asl' = 'harshil_asl';
   vocabularyId = 'asl_alphabet_harshil';
   supportedLabels: string[] = ASL_LABELS;
@@ -23,7 +23,7 @@ export class HarshilAslAdapter implements RecognitionAdapter {
   getMeta() {
     return {
       id: this.id,
-      name: 'Harshil ASL Model (A-Z)',
+      name: 'ASL Model (A-Z)',
       kind: 'static_mlp',
       labels: this.supportedLabels,
       sampleCount: 7800,
@@ -75,7 +75,7 @@ export class HarshilAslAdapter implements RecognitionAdapter {
       isGenericGesture: false,
       vocabularyId: this.vocabularyId,
       hand: (input.handedness[0] as 'Left' | 'Right') || 'Right',
-      notes: `Harshil ASL Model (Letters A-Z) — Stable frames: ${this.stableCount}/${this.STABLE_THRESHOLD}`,
+      notes: `ASL Model (Letters A-Z) — Stable frames: ${this.stableCount}/${this.STABLE_THRESHOLD}`,
     };
   }
 

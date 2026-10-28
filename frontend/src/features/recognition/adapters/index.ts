@@ -43,14 +43,14 @@ export const AVAILABLE_ADAPTERS: Array<{
 }> = [
   {
     id: 'harshil_asl_model',
-    name: 'Harshil ASL Writing (A-Z)',
+    name: 'ASL Writing (A-Z)',
     mode: 'harshil_asl',
     description: 'Neural network model trained on 21-joint 63-D features recognizing 26 ASL alphabet letters with stabilization and word buffer.',
     isGenuineSignLanguage: true,
   },
   {
     id: 'harshil_hci_model',
-    name: 'Harshil HCI Studio (9 Gestures)',
+    name: 'HCI Studio (9 Gestures)',
     mode: 'harshil_hci',
     description: 'Real-time gesture control model: Volume Up/Down, Scroll Up, Virtual Mouse Cursor Tracking, Left/Right Click, and Zoom Mode.',
     isGenuineSignLanguage: false,

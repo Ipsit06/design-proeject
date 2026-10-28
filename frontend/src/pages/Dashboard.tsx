@@ -72,7 +72,7 @@ export const Dashboard: React.FC = () => {
         <div className="relative max-w-3xl">
           <Badge variant="default" className="mb-4 border-white/20 bg-white/10 text-white">
             <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[#b9edc9]" />
-            Harshil Hand Gesture Studio
+            Hand Gesture Studio
           </Badge>
           <h1
             tabIndex={-1}
@@ -82,7 +82,7 @@ export const Dashboard: React.FC = () => {
             Human-Computer Interaction & ASL Writing
           </h1>
           <p className="text-base text-white/75 mt-4 leading-relaxed max-w-2xl">
-            Real-time hand gesture studio powered by Harshil's trained neural network models. Control your computer with gestures or write words using the ASL manual alphabet.
+            Real-time hand gesture studio powered by trained neural network models. Control your computer with gestures or write words using the ASL manual alphabet.
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export const Dashboard: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-ink">Harshil Hand Gesture Studio</h2>
+                <h2 className="text-lg font-bold text-ink">Hand Gesture Studio</h2>
                 <span className="flex items-center gap-1 text-[11px] font-semibold text-forest bg-sage px-2.5 py-1 rounded-full">
                   <span className="w-1.5 h-1.5 rounded-full bg-forest animate-pulse" />
                   HCI + ASL Models Loaded
@@ -324,7 +324,7 @@ export const Dashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-ink flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-status-success" />
-                  Harshil ASL Alphabet Letters ({aslLetters.length})
+                  ASL Alphabet Letters ({aslLetters.length})
                 </span>
                 <span className="text-[11px] text-forest font-semibold">Trained asl_model</span>
               </div>
@@ -344,7 +344,7 @@ export const Dashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-ink flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-purple-500" />
-                  Harshil HCI Gestures & Actions ({hciGestures.length})
+                  HCI Gestures & Actions ({hciGestures.length})
                 </span>
                 <span className="text-[11px] text-purple-700 font-semibold">Trained gesture_model</span>
               </div>

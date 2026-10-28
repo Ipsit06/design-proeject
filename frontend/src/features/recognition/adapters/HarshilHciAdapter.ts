@@ -5,17 +5,17 @@ const GESTURE_NAME_MAP: Record<string, string> = {
   open_palm: 'Open Palm (Scroll Up)',
   fist: 'Fist (Idle / Deactivate)',
   two_fingers: 'Two Fingers (Cursor Tracking)',
-  pointing: 'Pointing',
+  pointing: 'Pointing ☝️ (inactive)',
   thumbs_up: 'Thumbs Up (Volume Up)',
   thumbs_down: 'Thumbs Down (Volume Down)',
-  victory: 'Victory (Zoom Mode)',
+  victory: 'Victory ✌️ (inactive)',
   ok_sign: 'OK Sign (Right Click)',
   pinch: 'Pinch (Left Click)',
 };
 
 export class HarshilHciAdapter implements RecognitionAdapter {
   id = 'harshil_hci_model';
-  name = 'Harshil HCI Studio (9 Gestures)';
+  name = 'HCI Studio (9 Gestures)';
   mode: 'harshil_hci' = 'harshil_hci';
   vocabularyId = 'hci_gestures_harshil';
   supportedLabels: string[] = HCI_LABELS;
@@ -35,7 +35,7 @@ export class HarshilHciAdapter implements RecognitionAdapter {
   getMeta() {
     return {
       id: this.id,
-      name: 'Harshil Gesture HCI Model',
+      name: 'Gesture HCI Model',
       kind: 'static_mlp',
       labels: this.supportedLabels,
       sampleCount: 2700,
@@ -83,7 +83,7 @@ export class HarshilHciAdapter implements RecognitionAdapter {
       isGenericGesture: true,
       vocabularyId: this.vocabularyId,
       hand: (input.handedness[0] as 'Left' | 'Right') || 'Right',
-      notes: `Harshil HCI Gesture: ${pred.label} (${(pred.confidence * 100).toFixed(0)}%)`,
+      notes: `HCI Gesture: ${pred.label} (${(pred.confidence * 100).toFixed(0)}%)`,
     };
   }
 

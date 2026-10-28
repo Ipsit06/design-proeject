@@ -143,7 +143,7 @@ export const DEFAULT_GESTURES: GestureMapping[] = [
   // --- 100 Emoji Gesture Catalog ---
   ...EMOJI_GESTURES.map((g) => ({
     category: `EMOJI_${g.code}`,
-    text: `${g.emoji} ${g.name}`,
+    text: g.name,
     status: 'implemented_tested' as const,
     type: 'generic_gesture' as const,
     enabled: true,
